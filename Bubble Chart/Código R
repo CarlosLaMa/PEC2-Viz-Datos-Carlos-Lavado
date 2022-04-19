@@ -1,0 +1,66 @@
+---
+title: "Bubble Chart Viz"
+author: "Carlos Lavado Mahia"
+date: "15/4/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Preparación
+
+Leemos los datos del fichero extraído de Kaggle: https://www.kaggle.com/datasets/anandhuh/covid19-in-world-countrieslatest-data?resource=download.
+
+Acto seguido, preparamos los datos para el grafo deseado, sobre los datos de COVID a nivel mundial.
+
+```{r reading&preparing}
+# Carga y primera lectura (escogemos únicamente los 10 países más poblados).
+countries <- read.csv("C:/Users/carlo/OneDrive/Documentos/MASTER/4o semestre/Visualización de datos/PEC2/worldwide covid data.csv")
+countries <- head(countries[order(countries$Population, decreasing=TRUE), ], 10)
+summary(countries)
+
+# Observamos los valores únicos de los países resultantes.
+countries$Country.Other
+
+# Mapeamos cada país a su respectivo continente, creando una variable categórica.
+countries$Continent <- ifelse(countries$Country.Other=="China", "Asia",
+                       ifelse(countries$Country.Other=="India", "Asia",
+                       ifelse(countries$Country.Other=="USA", "America",
+                       ifelse(countries$Country.Other=="Indonesia", "Asia",
+                       ifelse(countries$Country.Other=="Pakistan", "Asia",
+                       ifelse(countries$Country.Other=="Brazil", "America",
+                       ifelse(countries$Country.Other=="Nigeria", "Africa",
+                       ifelse(countries$Country.Other=="Bangladesh", "Asia",
+                       ifelse(countries$Country.Other=="Russia", "Asia",
+                       ifelse(countries$Country.Other=="Mexico", "America",
+                                           NA  ))))))))))
+
+# Factorizamos la variable Continent, para tener la distinción de color en el grafo.
+countries$Continent <- as.factor(countries$Continent)
+summary(countries$Continent)
+```
+
+
+## Visualización
+
+Realizamos la visualización deseada:
+
+```{r plotting}
+# Cargamos librerías necesarias.
+if (!require('ggplot2')) install.packages('ggplot2')
+library(ggplot2)
+
+# Necesitaremos plotly para añadir un pequeño hover interactivo.
+if (!require('plotly')) install.packages('plotly')
+library(plotly)
+
+# Creamos el objeto con ggplot2.
+# Variables de los ejes: número total de tests (x), casos activos por millón de habitantes (Y).
+# 3a variable númerica: número de población, marca el diámetro del círculo.
+# 4a variable (categórica): continente, delimita el color del círculo.
+p <- ggplot(countries, aes(x=Total.Tests, y=Tot.Cases..1M.pop, size = Population, color = Continent)) +
+       geom_point(alpha=0.7) + scale_size(range = c(2,10)) + ggtitle("COVID tests and cases of biggest countries.")
+ggplotly(p)
+```
