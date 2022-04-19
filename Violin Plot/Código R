@@ -1,0 +1,40 @@
+---
+title: "Violin Plot Viz"
+author: "Carlos Lavado Mahia"
+date: "17/4/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Preparación
+
+Leemos los datos del fichero extraído de Kaggle:  https://www.kaggle.com/datasets/alopez247/pokemon
+
+Acto seguido, preparamos los datos para el grafo deseado, sobre las estadísticas de Pokémon de hasta sexta generación.
+
+```{r reading&preparing}
+# Carga y primera lectura (escogemos únicamente los Pokémon de tipo Planta, Fuego y Agua).
+pokemon <- read.csv("C:/Users/carlo/OneDrive/Documentos/MASTER/4o semestre/Visualización de datos/PEC2/pokemon_alopez247.csv")
+subset_pk <- subset(pokemon, Type_1 == "Fire" | Type_1 == "Water" | Type_1 == "Grass")
+subset_pk$Type_1 <- as.factor(subset_pk$Type_1)
+summary(subset_pk)
+```
+
+## Visualización
+
+Realizamos la visualización deseada:
+
+```{r plotting}
+# Cargamos librerías necesarias.
+if (!require('ggplot2')) install.packages('ggplot2')
+library(ggplot2)
+
+# Creamos el violin plot.
+# En este caso, añadimos también el box-plot para ver medidas estadísticas.
+p <- ggplot(subset_pk, aes(x=Type_1, y=Speed, color=Type_1)) + 
+  geom_violin(trim=FALSE) + geom_boxplot(width=0.1) + ggtitle("Speed of Pokémon by Type")
+p 
+```
