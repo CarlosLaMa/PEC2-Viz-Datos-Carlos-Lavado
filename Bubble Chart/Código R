@@ -61,6 +61,6 @@ library(plotly)
 # 3a variable númerica: número de población, marca el diámetro del círculo.
 # 4a variable (categórica): continente, delimita el color del círculo.
 p <- ggplot(countries, aes(x=Total.Tests, y=Tot.Cases..1M.pop, size = Population, color = Continent)) +
-       geom_point(alpha=0.7) + scale_size(range = c(2,10)) + ggtitle("COVID tests and cases of biggest countries.")
+       geom_point(alpha=0.7) + scale_size(range = c(2,10)) + ggtitle("COVID tests and cases of biggest countries")
 ggplotly(p)
 ```
